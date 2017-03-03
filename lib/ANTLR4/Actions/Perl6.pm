@@ -50,9 +50,9 @@ class ANTLR4::Actions::Perl6
 		my $json;
 		my $terms = '';
 		$terms = join( ' | ', map { self.term( $_ ) },
-			       @( $ast.<content> ) )
-			if @( $ast.<content> );
-		for <command options label> -> $key
+			       $ast.<contents>.flat )
+			if $ast.<contents>:v.elems;
+                for <command options label> -> $key
 			{
 			$json.{$key} = $ast.{$key} if $ast.{$key};
 			}
@@ -68,10 +68,11 @@ class ANTLR4::Actions::Perl6
 		{
 		my $json;
 		my $terms = '';
-		if @( $ast.<content> )
+
+		if $ast.<contents>:v.elems
 			{
 			$terms = join( ' ', map { self.term( $_ ) },
-				       @( $ast.<content> ) );
+				       $ast.<contents>.flat );
 			}
 		else
 			{
@@ -163,7 +164,7 @@ class ANTLR4::Actions::Perl6
 				}
 			$_
 			},
-			@( $ast.<content> ) );
+			$ast.<content> );
 		$term ~= ' ]>';
 		self._modify( $ast, $term );
 		}
@@ -175,8 +176,8 @@ class ANTLR4::Actions::Perl6
 		$term ~= '!' if $ast.<complemented>;
 		my $group = '';
 		$group = join( ' | ', map { self.term( $_ ) },
-			       @( $ast.<content> ) )
-			if @( $ast.<content> );
+			       $ast.<content> )
+			if $ast.<content>:v.elems;
                 $term ~= qq{( $group )};
 		self._modify( $ast, $term );
 		}
@@ -261,8 +262,8 @@ class ANTLR4::Actions::Perl6
 		my $terms = '';
 
 		$terms = join( ' ', map { self.term( $_ ) },
-                               @( $ast.<content> ) )
-			if @( $ast.<content> );
+                               $ast.<contents>.flat )
+			if $ast.<contents>:v.elems;
 
 		# Yes, probably a fancier way to do this, but it works.
 		#
@@ -284,8 +285,8 @@ class ANTLR4::Actions::Perl6
 		my $rules = '';
 
 		$rules = join( ' ', map { self.rule( $_ ) },
-                               @( $ast.<content> ) )
-			if @( $ast.<content> );
+                               $ast.<contents>.flat )
+		        if $ast.<contents>:v.elems;
 
 		# Yes, probably a fancier way to do this, but it works.
 		#
